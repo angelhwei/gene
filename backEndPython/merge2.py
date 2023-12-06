@@ -21,7 +21,7 @@ def merge(input_file1, input_file2, output_file):
 
     for record in data2:  
         new_record = {
-            'chromosome': record['Chr'],
+            'chromosome': record['chromosome'],
             'BP': record['BP'],
             'pop ID': record['Pop ID'],
             'p_nuc': record['P Nuc'],

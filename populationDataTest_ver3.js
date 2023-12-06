@@ -279,7 +279,6 @@ const mutationView = function (squareWidth, compressionNum, scaffold) {
             let data = JSON.parse(this.responseText)
             let xhr3 = new XMLHttpRequest()
             let geneWidth = 0
-            let j = 0
             let space = 0
 
             // Whole gene
@@ -302,101 +301,117 @@ const mutationView = function (squareWidth, compressionNum, scaffold) {
             // document.getElementById('content1').innerHTML = widths
 
             // Content2
-            console.time()
-            let lastGene = 0 // record the last gene to compare with real endpoint
-            for (let i = 0; i < data.length; i++) {
-                if (data[i].chromosome == scaffold) {
-                    // space
+            let xhr2 = new XMLHttpRequest()
+            xhr2.onreadystatechange = function () {
+                let lastGene = 0 // record the last gene to compare with real endpoint
 
-                    if (i == 0 || data[i].chromosome != data[i - 1].chromosome) {
-                        space = (data[i].start - 1) / compression //non gene
-                    } else {
-                        space = (data[i].start - 1 - (data[i - 1].end + 1)) / compression //non gene
-                    }
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].chromosome == scaffold) {
+                        // space
 
-                    ///////////* Old version *//////////
-                    // space = space * squareWidth
-
-                    // // case1:換行前有空白
-                    // if (X + geneWidth * squareWidth + space > width) {
-                    //     // 這裡的geneWidth為上一個
-                    //     Y += yAdd
-                    //     space = space - (width - X - geneWidth * squareWidth)
-                    //     X = 0
-                    // }
-                    // // space長度超出視窗
-                    // while (space > width) {
-                    //     Y += yAdd
-                    //     space -= width
-                    // }
-
-                    // X = space //starting point of each gene
-                    ///////////* Old version *//////////
-
-                    // ** New compression code **
-                    for (let n = 0; n < space; n++) {
-                        if (X + squareWidth > width) {
-                            Y += yAdd
-                            X = 0
+                        if (i == 0 || data[i].chromosome != data[i - 1].chromosome) {
+                            space = (data[i].start - 1) / compression //non gene
+                        } else {
+                            space = (data[i].start - 1 - (data[i - 1].end + 1)) / compression //non gene
                         }
 
-                        drawRectangle(svg, X, Y, squareWidth, squareHeight, comColor)
-                        X += squareWidth
-                    }
+                        ///////////* Old version *//////////
+                        // space = space * squareWidth
 
-                    geneWidth = data[i].width / compression // square number of genwidth
-                    // if (geneWidth % compression != 0) geneWidth += 1
+                        // // case1:換行前有空白
+                        // if (X + geneWidth * squareWidth + space > width) {
+                        //     // 這裡的geneWidth為上一個
+                        //     Y += yAdd
+                        //     space = space - (width - X - geneWidth * squareWidth)
+                        //     X = 0
+                        // }
+                        // // space長度超出視窗
+                        // while (space > width) {
+                        //     Y += yAdd
+                        //     space -= width
+                        // }
 
-                    if (geneWidth != 0) {
-                        for (let k = 0; k < geneWidth; k++) {
+                        // X = space //starting point of each gene
+                        ///////////* Old version *//////////
+
+                        // ** New compression code **
+                        for (let n = 0; n < space; n++) {
                             if (X + squareWidth > width) {
                                 Y += yAdd
                                 X = 0
                             }
-                            drawGeneRectangle(
-                                svg,
-                                X,
-                                Y,
-                                squareWidth,
-                                squareHeight,
-                                genomeColorL1,
-                                `Name: ${data[i].name} &nbsp Start: ${data[i].start} &nbsp End: ${data[i].end}`
-                            )
+
+                            drawRectangle(svg, X, Y, squareWidth, squareHeight, comColor)
                             X += squareWidth
                         }
-                    }
-                    lastGene++
-                }
-            }
-            xhr3.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    let data3 = JSON.parse(this.responseText)
-                    for (let scaf = 0; scaf < data3.length; scaf++) {
-                        if (data[lastGene].chromosome == data3[scaf].chromosome) {
-                            if (data[lastGene].end < data3[scaf].Length) {
-                                space = (data3[scaf].Length - data[lastGene].end) / compression
 
-                                for (let n = 0; n < space; n++) {
-                                    if (X + squareWidth > width) {
-                                        Y += yAdd
-                                        X = 0
+                        geneWidth = data[i].width / compression // square number of genwidth
+                        // if (geneWidth % compression != 0) geneWidth += 1
+
+                        if (geneWidth != 0) {
+                            for (let k = 0; k < geneWidth; k++) {
+                                if (X + squareWidth > width) {
+                                    Y += yAdd
+                                    X = 0
+                                }
+                                drawGeneRectangle(
+                                    svg,
+                                    X,
+                                    Y,
+                                    squareWidth,
+                                    squareHeight,
+                                    genomeColorL1,
+                                    `Name: ${data[i].name} &nbsp Start: ${data[i].start} &nbsp End: ${data[i].end}`
+                                )
+                                X += squareWidth
+                            }
+                        }
+                        lastGene++
+                    }
+                }
+
+                // last gene endpoint to scaffold length endpoint
+                xhr3.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        let data3 = JSON.parse(this.responseText)
+                        for (let scaf = 0; scaf < data3.length; scaf++) {
+                            if (data[lastGene].chromosome == data3[scaf].chromosome) {
+                                if (data[lastGene].end < data3[scaf].Length) {
+                                    space =
+                                        (data3[scaf].Length - data[lastGene].end + 1) / compression
+
+                                    for (let n = 0; n < space; n++) {
+                                        if (X + squareWidth > width) {
+                                            Y += yAdd
+                                            X = 0
+                                        }
+                                        drawRectangle(
+                                            svg,
+                                            X,
+                                            Y,
+                                            squareWidth,
+                                            squareHeight,
+                                            comColor
+                                        )
+                                        X += squareWidth
                                     }
-                                    drawRectangle(svg, X, Y, squareWidth, squareHeight, comColor)
-                                    X += squareWidth
                                 }
                             }
                         }
                     }
                 }
+                xhr3.open('GET', 'scaffoldLength.json', true)
+                xhr3.send()
+
+                if (squareWidth < 5) {
+                    svg.attr('height', Y + 10)
+                } else {
+                    svg.attr('height', Y + squareWidth + 10)
+                }
+                console.timeEnd()
             }
-            xhr3.open('GET', 'scaffoldLength.json', true)
-            xhr3.send()
-            if (squareWidth < 5) {
-                svg.attr('height', Y + 10)
-            } else {
-                svg.attr('height', Y + squareWidth + 10)
-            }
-            console.timeEnd()
+            xhr2.open('GET', 'mutation.json', true)
+            xhr2.send()
         }
     }
     xhr.open('GET', 'compressGeneFormat.json', true)
@@ -416,7 +431,7 @@ const mutationView = function (squareWidth, compressionNum, scaffold) {
                         // compression
                         if (first) {
                             nonMu = (data2[i].BP - 1) / compression
-                        } else {
+                        } else if (data2[i - 1].chromosome == data2[i].chromosome) {
                             nonMu = (data2[i].BP - 1 - (data2[i - 1].BP + 1)) / compression
                         }
 
@@ -517,6 +532,22 @@ const mutationView = function (squareWidth, compressionNum, scaffold) {
     }
     xhr2.open('GET', 'mutation.json', true)
     xhr2.send()
+
+    function compression(start, end, isGene) {
+        let squareNum = (end - start) / compressionNum
+        for (let i = 0; i < squareNum; i++) {
+            if (X + squareWidth > width) {
+                Y += yAdd
+                X = 0
+            }
+            if (isGene) {
+                drawGeneRectangle(svg, X, Y, squareWidth, squareHeight, genomeColorL1)
+            } else {
+                drawRectangle(svg, X, Y, squareWidth, squareHeight, comColor)
+            }
+            X += squareWidth
+        }
+    }
 }
 
 chromosomeBtn()
@@ -579,6 +610,92 @@ function drawGeneRectangle(svg, x, y, w, h, c, details) {
             // d3.select(this)
             //     .style("stroke", "none")
             //     .style("stroke-width", "0");
+        })
+        .on('click', function () {
+            d3.select('#PC').text('') // Clear the content
+            var margin = { top: 30, right: 10, bottom: 10, left: 0 },
+                width = 300 - margin.left - margin.right,
+                height = 400 - margin.top - margin.bottom
+
+            var svgPC = d3
+                .select('#PC')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+            svgPC.append('rect').attr('width', width).attr('height', height).attr('fill', '#fff') // Replace "your-color" with the color you want
+            // Parse the Data
+            d3.csv(
+                'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv',
+                function (data) {
+                    // Extract the list of dimensions we want to keep in the plot. Here I keep all except the column called Species
+                    dimensions = d3.keys(data[0]).filter(function (d) {
+                        return d != 'Species'
+                    })
+
+                    // For each dimension, I build a linear scale. I store all in a y object
+                    var y = {}
+                    for (i in dimensions) {
+                        name = dimensions[i]
+                        y[name] = d3
+                            .scaleLinear()
+                            .domain(
+                                d3.extent(data, function (d) {
+                                    return +d[name]
+                                })
+                            )
+                            .range([height, 0])
+                    }
+
+                    // Build the X scale -> it find the best position for each Y axis
+                    x = d3.scalePoint().range([0, width]).padding(1).domain(dimensions)
+
+                    // The path function take a row of the csv as input, and return x and y coordinates of the line to draw for this raw.
+                    function path(d) {
+                        return d3.line()(
+                            dimensions.map(function (p) {
+                                return [x(p), y[p](d[p])]
+                            })
+                        )
+                    }
+
+                    // Draw the lines
+                    svgPC
+                        .selectAll('myPath')
+                        .data(data)
+                        .enter()
+                        .append('path')
+                        .attr('d', path)
+                        .style('fill', 'none')
+                        .style('stroke', '#69b3a2')
+                        .style('opacity', 0.5)
+
+                    // Draw the axis:
+                    svgPC
+                        .selectAll('myAxis')
+                        // For each dimension of the dataset I add a 'g' element:
+                        .data(dimensions)
+                        .enter()
+                        .append('g')
+                        // I translate this element to its right position on the x axis
+                        .attr('transform', function (d) {
+                            return 'translate(' + x(d) + ')'
+                        })
+                        // And I build the axis with the call function
+                        .each(function (d) {
+                            d3.select(this).call(d3.axisLeft().scale(y[d]))
+                        })
+                        // Add axis title
+                        .append('text')
+                        .style('text-anchor', 'middle')
+                        .attr('y', -9)
+                        .text(function (d) {
+                            return d
+                        })
+                        .style('fill', 'black')
+                }
+            )
         })
 }
 

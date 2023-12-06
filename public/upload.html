@@ -1,0 +1,67 @@
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+    crossorigin="anonymous"
+/>
+<!-- HTML -->
+<input type="file" id="fileInput" accept=".txt" multiple />
+<button class="btn btn-info" type="button">
+    <a href="../populationDataTest_ver3.html">next</a>
+</button>
+<div id="visualization"></div>
+<script>
+    // JavaScript
+    document.getElementById('fileInput').addEventListener('change', function (e) {
+        var file = e.target.files
+        var formData = new FormData()
+        for (var i = 0; i < files.length; i++) {
+            formData.append('files', files[i])
+        }
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Here you would call the function to visualize the sequence with the returned JSON data
+                visualizeSequence(data)
+            })
+            .catch(error => {
+                console.error('Error:', error)
+            })
+    })
+    function visualizeSequence(data) {
+        // Create an SVG container
+        let svg = d3
+            .select('#visualization')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height)
+
+        // Create a rectangle for each segment in the sequence
+        let rectangles = svg.selectAll('rect').data(data).enter().append('rect')
+
+        // Set the properties of the rectangles
+        rectangles
+            .attr('x', function (d, i) {
+                return i * squareWidth
+            })
+            .attr('y', 0)
+            .attr('width', squareWidth)
+            .attr('height', squareHeight)
+            .attr('fill', function (d) {
+                if (d.type === 'gene') return 'green'
+                if (d.type === 'non-gene') return 'blue'
+                if (d.type === 'variation') return 'red'
+            })
+
+        // Add tooltips to the rectangles
+        rectangles.append('title').text(function (d) {
+            if (d.type === 'gene') return `Name: ${d.name} Start: ${d.start} End: ${d.end}`
+            if (d.type === 'non-gene') return 'Non-gene'
+            if (d.type === 'variation') return 'Variation'
+        })
+    }
+</script>

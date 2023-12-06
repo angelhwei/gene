@@ -19,10 +19,10 @@ def fetch_distance_and_not_between(input_file1, input_file2, output_file):
 
     for record in data2:  
         new_record = {
-            'Chr': record['Chr'],
+            'Chr': record['chromosome'],
              'BP': record['BP'],
-             'Pop ID': record['Pop ID'],
-             'P Nuc': record['P Nuc'],
+             'Pop ID': record['PopID'],
+             'P Nuc': record['PNuc'],
              'P': record['P'],
              'MuValues':record['MuValues']
         } 

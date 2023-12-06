@@ -1,0 +1,28 @@
+#content2{
+    overflow-y: auto;
+}
+
+.tooltip{
+  pointer-events: none;
+}
+.sequence{
+  display: flex;
+  flex-direction: row;  
+  justify-content: space-between;
+  gap: 30px;
+}
+#content2::-webkit-scrollbar {
+  width: 0px;
+}
+
+#content2::-webkit-scrollbar-track {
+  background: #fff; /* color of the tracking area */
+}
+
+#content2::-webkit-scrollbar-thumb {
+  background: #fff; /* color of the scroll thumb */
+}
+
+#content2::-webkit-scrollbar-thumb:hover {
+  background: #fff; /* color of the scroll thumb on hover */
+}
