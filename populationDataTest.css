@@ -1,15 +1,31 @@
+.content-container{
+  height: 500px;
+  /* width: 1100px; */
+  overflow-y: auto;
+}
+.barContainer{
+  height: 300px;
+  overflow-y: auto;
+}
 #content2{
-    overflow-y: auto;
+  /* visibility: hidden;
+   */
+}
+
+#scaffold-barchart{
+  /* width: 1000px;
+  height: 200px;
+  overflow-y: auto; */
 }
 
 .tooltip{
   pointer-events: none;
 }
 .sequence{
-  display: flex;
+  /* display: flex;
   flex-direction: row;  
   justify-content: space-between;
-  gap: 30px;
+  gap: 30px; */
 }
 #content2::-webkit-scrollbar {
   width: 0px;
@@ -25,4 +41,24 @@
 
 #content2::-webkit-scrollbar-thumb:hover {
   background: #fff; /* color of the scroll thumb on hover */
+}
+
+.axis {
+  opacity: 0.4;
+}
+.axis:hover {
+  opacity: 1;
+}
+
+.filterBtn{
+  border-radius: 5px;
+  border: none;
+  margin: 5px;
+  padding: 10px;
+  background-color: #53B3BD;
+  font-size: 12px;
+}
+
+.filterBtn:hover{
+  background-color: #3A8D94;
 }

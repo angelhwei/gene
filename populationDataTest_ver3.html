@@ -23,14 +23,14 @@
 
         <!-- As a heading -->
         <nav class="navbar navbar-dark" style="background-color: #53b3bd">
-            <span class="navbar-brand mb-0 h1">Genome</span>
+            <span class="navbar-brand mb-0 h1">VariaVisio</span>
         </nav>
 
-        <div class="container mt-5">
-            <div class="container text-center"></div>
-
+        <div class="container mt-5" id="b">
             <div class="border rounded ml-md-3 my-3">
-                <div id="my_dataviz"></div>
+                <div class="barContainer">
+                    <div id="scaffold-barchart"></div>
+                </div>
             </div>
 
             <div class="ml-md-3 my-3">
@@ -38,9 +38,15 @@
             </div>
 
             <div class="sequence">
-                <div class="border rounded ml-md-3 my-3">
+                <div class="content-container border rounded ml-md-3 my-3">
                     <div class="content2" id="content2"></div>
                 </div>
+                <!-- <div id="PC"></div> -->
+            </div>
+
+            <!-- Create a div where the graph will take place -->
+            <div>
+                <div id="filter"></div>
                 <div id="PC"></div>
             </div>
 
@@ -85,9 +91,13 @@
                         Update
                     </button>
                 </div>
+                <div class="ml-3">
+                    <button class="btn btn-info" type="button" id="expression-btn">Gene Expression</button>
+                </div>
             </div>
         </div>
+
         <script src="https://d3js.org/d3.v4.js"></script>
-        <script src="populationDataTest_ver3.js"></script>
+        <script type="module" src="test2.js"></script>
     </body>
 </html>

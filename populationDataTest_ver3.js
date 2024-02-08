@@ -15,7 +15,7 @@ const chromosomeBtn = function () {
 
     // append the svg object to the body of the page
     var svg = d3
-        .select('#my_dataviz')
+        .select('#scaffold-barchart')
         .append('svg')
         .attr('width', barWidth + margin.left + margin.right)
         .attr('height', barHeight + margin.top + margin.bottom)
@@ -304,8 +304,8 @@ const mutationView = function (squareWidth, compressionNum, scaffold) {
             let xhr2 = new XMLHttpRequest()
             xhr2.onreadystatechange = function () {
                 let lastGene = 0 // record the last gene to compare with real endpoint
-
                 for (let i = 0; i < data.length; i++) {
+                    //data=gene
                     if (data[i].chromosome == scaffold) {
                         // space
 
@@ -533,7 +533,7 @@ const mutationView = function (squareWidth, compressionNum, scaffold) {
     xhr2.open('GET', 'mutation.json', true)
     xhr2.send()
 
-    function compression(start, end, isGene) {
+    function geneCompress(start, end, isGene) {
         let squareNum = (end - start) / compressionNum
         for (let i = 0; i < squareNum; i++) {
             if (X + squareWidth > width) {

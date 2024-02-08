@@ -1,59 +1,70 @@
 import json
 import re
+import csv
 
-input_file_path = 'testjson.json'
-output_file_path = 'compressGeneFormat.json'
-start_attribute = 'start'
-end_attribute = 'end'
-separator = 'gasp1.m1b.','gasp1.m3.'
-
+input_file_path1 = '/Users/angel/Desktop/LAB/gene_code/gene/backEndPython/Leptoria_gene_list.csv'
+input_file_path2 = '/Users/angel/Desktop/LAB/gene_code/gene/backEndPython/Leptoria_scaffold_length.csv'
+output_file_path = '/Users/angel/Desktop/LAB/gene_code/gene/backEndPython/newData3.json'
+symbols_to_remove = ["\n", '"', ";"]
 
 def custom_split(sepr_list, str_to_split):
         # create regular expression dynamically
         regular_exp = '|'.join(map(re.escape, sepr_list))
         return re.split(regular_exp, str_to_split)
 
-def fetch_distance_and_not_between(input_file, output_file, start_attr, end_attr):
-    with open(input_file, 'r') as f:
-        data = json.load(f)
-        # Sort the list of dictionaries by the 'start' attribute
-        # sorted_data = sorted(data, key=lambda x: x['start'])
+# 读取input_file_path2文件，将chromosome和length存储到字典中
+length_dict = {}
+with open(input_file_path2, 'r') as f2:
+    for line in f2:
+        row = line.split(' ')
+        length_dict[row[0]] = int(row[1])
 
-    output_data = []
+output_data = []
 
-    i=0
-    for record in data:
-        start = int(record[start_attr])
-        end = int(record[end_attr])
-        i+=1
-        # nums_between = list(range(start+1, end))
-        # not_between = list(filter(lambda x: x not in nums_between, range(start, end)))
-        distance = abs(end - start)
-        compressGene=int(distance)
-        
+with open(input_file_path1, 'r') as f1:
+    lines = iter(f1)
 
-        for word in separator:
-          if word in record['name']:
-           record['name'] = record['name'].replace(word, '')
-        
-        geneName="Gene" + str(record['name'])
-        record['name']=int(record['name'])
+    for line in lines:
+        row = line.split('\t')
+        for symbol in symbols_to_remove:
+            row[0] = row[0].replace(symbol,"")
+            row[4] = row[4].replace(symbol, "")
 
-        new_record = {
-            "chromosome": record["chromosome"],
-            "name": record["name"],
-            "start": start, #
-            "end": end, 
-            "width": compressGene #
+        length = length_dict.get(row[0], 0)  # 如果找不到对应的chromosome，length默认为0
+        gene = {
+            "name": row[4],
+            "start": int(row[2]),
+            "end": int(row[3])
         }
-        
+        mutation = {
+            "BP": 0,
+            "popId": 0,
+            "pNuc": 0,
+            "p": 0,
+            "muValues": 0
+        }
+        if not output_data or output_data[-1]["chromosome"] != row[0]:
+            output_data.append({
+                "chromosome": row[0],
+                "length": length,
+                "gene": [],
+                "mutation": [mutation] 
+            })
 
-        output_data.append(new_record)
+        # for line2 in lines2:
+        #     row2 = line2.split(' ')
+        #     if row[0].lower() == row2[0].lower():
+        #         print(row2[0])
+        #         output_data[0]["length"] = int(row2[1])
+                
+        if output_data:
+            output_data[-1]["gene"].append(gene)
+        next(lines, None)
 
-    
-    # Sort the list of dictionaries by the 'start' attribute
-    output_data = sorted(output_data, key=lambda x: x['start'])
-    with open(output_file, 'w') as f:
-        json.dump(output_data, f)
 
-fetch_distance_and_not_between(input_file_path, output_file_path, start_attribute, end_attribute)
+
+for data in output_data:
+    data["gene"] = sorted(data["gene"], key=lambda x: x['start'])
+
+with open(output_file_path, 'w') as f:
+    json.dump(output_data, f)

@@ -1,9 +1,9 @@
 import json
 
-input_file_path1 = 'length.json'
-input_file_path2 = 'gene.json'
-input_file_path3 = 'mutations.json'
-output_file_path = 'newData.json'
+input_file_path1 = 'scaffoldLength.json'
+input_file_path2 = 'compressGeneFormat.json'
+input_file_path3 = 'mutation.json'
+output_file_path = 'new.json'
 
 def merge(input_file1, input_file2, input_file3, output_file):
     with open(input_file1) as f1, open(input_file2) as f2, open(input_file3) as f3:

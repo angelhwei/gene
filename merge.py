@@ -42,7 +42,9 @@ def merge(input_file1, input_file2, input_file3, output_file):
                     })
 
             output_data.append(new_record)
-
+    for data in output_data:
+        data["gene"] = sorted(data["gene"], key=lambda x: x['start'])
+        
     with open(output_file, 'w') as f:
         json.dump(output_data, f)
 
