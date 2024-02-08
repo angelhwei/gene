@@ -609,7 +609,7 @@ fetchData().then(data => {
         svgContainer.selectAll('*').remove()
 
         // Parse the Data
-        d3.csv('./data.csv', function (data) {
+        d3.csv('./data/data.csv', function (data) {
             let sortAscending = {} // Store the sorting direction for each dimension
 
             let columnNames = d3.keys(data[0])
